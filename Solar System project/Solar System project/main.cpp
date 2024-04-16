@@ -312,7 +312,7 @@ void get_sun()
         GLfloat sun_mat_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
         GLfloat sun_mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
         GLfloat sun_mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        GLfloat sun_mat_emission[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+        GLfloat sun_mat_emission[] = { 1.0f, 1.0f, 1.0f, 1.0f };
         GLfloat sun_mat_shininess = 0.0f;
 
         glMaterialfv(GL_FRONT, GL_AMBIENT, sun_mat_ambient);
@@ -666,6 +666,11 @@ void myDisplay(void)
     gluPerspective(Angle, (float)width / (float)height, 1, 10000000000);    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(aix_x, aix_y, aix_z, 0, 0, 0, 0, 0, 1);
+
+    //overally increasy the light levels
+    GLfloat global_ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+
     get_sun();
     get_mercu();
     get_ven();
