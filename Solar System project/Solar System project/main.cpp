@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <iostream>
+#include <string> 
 
 
 //Set the width and height of the Window
@@ -14,7 +15,11 @@
 //The radius of earth (expanded), can also be treated as unit to calcualte other planet's radius
 #define Eradius 16000000
 const GLfloat Pi = 3.1415926536f;
-static int day = 0;
+int day = 0;
+int rewrite_day = 0;
+int month = 0;
+int year = 0;
+std::string dayString;
 GLdouble Angle = 80.0;
 GLdouble aix_x = 0.0, aix_y = 2000000000, aix_z = 2000000000;
 GLdouble cameraDistance = 0;
@@ -60,6 +65,12 @@ float earthRotationAngle = 0.0f;
 float earth_rotation_per_frame = get_rot_per_frame_year(365.0f);
 float earthAxisRotationAngle = 0.0f;
 float earth_spin_per_frame = get_rot_per_frame_day(0.99f); //how many times does the planet turn around y axis during one day - earth = 1
+
+//MOON
+float moonRotationAngle = 0.0f;
+float moon_rotation_per_frame = get_rot_per_frame_year(365.0f);
+float moonAxisRotationAngle = 0.0f;
+float moon_spin_per_frame = get_rot_per_frame_day(0.99f); //how many times does the planet turn around y axis during one day - earth = 1
 
 //Mars
 float marsRotationAngle = 0.0f;
@@ -126,8 +137,8 @@ float updateAxisRotation(float rot_per_frame, float RotationAngle) {
 }
 
 //The ratio of radius0.4:1:1:0.5:11:9:4:3
-//mercurios,venus,earth,mars,jupiter,saturn,uranus,neptune 
-GLuint tbg,tsun,tearth,tmercu,tven,tmars,tjup,tsat,tura,tnep;
+//mercurios,venus,earth,moon,mars,jupiter,saturn,uranus,neptune 
+GLuint tbg,tsun,tearth,tmoon,tmercu,tven,tmars,tjup,tsat,tura,tnep;
 
 //Loading texture files, which can also be found at http://www.cppblog.com/doing5552/archive/2009/01/08/71532.aspx
 int power_of_two(int n)
@@ -249,6 +260,7 @@ void init_LoadallTexture()
     tsun = LoadTexture("pictures/sol.bmp");
     tbg = LoadTexture("pictures/bg.bmp");
     tearth = LoadTexture("pictures/terra.bmp");
+    tmoon = LoadTexture("pictures/lua.bmp");
     tmercu = LoadTexture("pictures/mercurio.bmp");
     tven = LoadTexture("pictures/venus.bmp");
     tmars = LoadTexture("pictures/marte.bmp");
@@ -355,16 +367,18 @@ void get_earth() {
 
 
     // Set material properties and draw Earth
-    GLfloat earth_mat_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat earth_mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat earth_mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    GLfloat earth_mat_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    GLfloat earth_mat_shininess = 0.0f;
-    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat_specular);
-    glMaterialfv(GL_FRONT, GL_EMISSION, earth_mat_emission);
-    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    {
+        GLfloat earth_mat_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+        GLfloat earth_mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+        GLfloat earth_mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat earth_mat_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat earth_mat_shininess = 0.0f;
+        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat_ambient);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat_diffuse);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat_specular);
+        glMaterialfv(GL_FRONT, GL_EMISSION, earth_mat_emission);
+        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    }
 
     // Draw the Earth as a textured sphere
     GLUquadricObj* sphere = gluNewQuadric();
@@ -376,7 +390,38 @@ void get_earth() {
     gluSphere(sphere, 15945000, 100, 100);
     glDisable(GL_TEXTURE_2D);
 
-    glPopMatrix(); // Restore the original matrix state
+    glPushMatrix(); // Save Earth's matrix state for the Moon
+
+    // Moon's orbital motion around the Earth
+    moonRotationAngle = updateRotation(moon_rotation_per_frame, moonRotationAngle);
+    glRotatef(moonRotationAngle, 0.0f, 1.0f, 0.0f);
+
+    // Translate Moon to its orbital radius from Earth
+    glTranslatef(0.384 * Distance, 0.0f, 0.0f);
+
+    // Set material properties and draw the Moon
+    GLfloat moon_mat_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat moon_mat_diffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+    GLfloat moon_mat_specular[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+    GLfloat moon_mat_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    GLfloat moon_mat_shininess = 10.0f;
+    glMaterialfv(GL_FRONT, GL_AMBIENT, moon_mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, moon_mat_diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, moon_mat_specular);
+    glMaterialfv(GL_FRONT, GL_EMISSION, moon_mat_emission);
+    glMaterialf(GL_FRONT, GL_SHININESS, moon_mat_shininess);
+
+    sphere = gluNewQuadric();
+    glEnable(GL_TEXTURE_2D);
+    gluQuadricDrawStyle(sphere, GLU_FILL);
+    gluQuadricTexture(sphere, GL_TRUE);
+    gluQuadricNormals(sphere, GLU_SMOOTH);
+    glBindTexture(GL_TEXTURE_2D, tmoon);
+    gluSphere(sphere, 4345000, 50, 50);  // Adjust the size according to your scale
+    glDisable(GL_TEXTURE_2D);
+
+    glPopMatrix(); // Restore Earth's matrix state
+    glPopMatrix(); // Restore the original matrix state}
 }
 
 
@@ -653,6 +698,70 @@ void get_nep()
 
 }
 
+void renderBitmapString(float x, float y, void* font, const char* string) {
+    const char* c;
+    glRasterPos2f(x, y);
+    for (c = string; *c != '\0'; c++) {
+        glutBitmapCharacter(font, *c);
+    }
+}
+
+void DisplayText(int day) {
+        // Save current matrix state and attributes
+        glPushAttrib(GL_ENABLE_BIT);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        int width = glutGet(GLUT_WINDOW_WIDTH);
+        int height = glutGet(GLUT_WINDOW_HEIGHT);
+        gluOrtho2D(0, width, 0, height);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        // Disable depth test so text is not removed by depth buffer
+        glDisable(GL_DEPTH_TEST);
+
+        // Set text properties
+        glColor3f(1.0, 1.0, 1.0);  // White color
+
+        /*
+        if (day >= 30) {
+            ++month;
+            day = 0;
+        }
+        else if (month >= 12 && day >= 30) {
+            year++;
+            day = 0;
+            month = 0;
+        }*/
+ 
+        if (month >= 1) {
+            dayString = "Day: " + std::to_string(day) + "Month: " + std::to_string(month);
+        }
+        else if (year >= 1) {
+            dayString = "Day: " + std::to_string(day) + "Month: " + std::to_string(month) + "Year: " + std::to_string(year);
+        }
+        else {
+            dayString = "Day: " + std::to_string(day);
+
+        }
+        const char* cstr = dayString.c_str();  // Convert string to C-style string
+
+        // Adjust these coordinates as needed
+        renderBitmapString(20, 20, GLUT_BITMAP_TIMES_ROMAN_24, cstr);  // Position text
+
+        // Restore matrices
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+
+        // Re-enable depth test if it was enabled previously
+        glPopAttrib();
+}
+
 //Display Function
 void myDisplay(void)
 { 
@@ -670,6 +779,9 @@ void myDisplay(void)
     //overally increasy the light levels
     GLfloat global_ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+
+
+    DisplayText(day);
 
     get_sun();
     get_mercu();
@@ -701,11 +813,15 @@ void timerProc(int id)
         elapsedTime -= 1000; // Reset elapsedTime after incrementing day
     }
 
+    //std::cout << "Camera Position: (" << aix_x << ", " << aix_y << ", " << aix_z << "), Angle: " << Angle << std::endl;
+
+
     glutPostRedisplay();
 
     // Continue to call the timer function every 17 milliseconds for 60fps
     glutTimerFunc(17, timerProc, 1);
 }
+
 
 void mykeyboard(unsigned char key, int x, int y) {
     switch (key) {
