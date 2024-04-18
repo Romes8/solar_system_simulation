@@ -16,6 +16,7 @@
 #define Eradius 16000
 const GLfloat Pi = 3.1415926536f;
 int day = 0;
+int t_day = 1;
 int rewrite_day = 0;
 int month = 0;
 int year = 0;
@@ -727,25 +728,27 @@ void DisplayText(int day) {
         // Set text properties
         glColor3f(1.0, 1.0, 1.0);  // White color
 
-        /*
-        if (day >= 30) {
+        
+        
+
+        if (t_day >= 30) {
             ++month;
-            day = 0;
+            t_day = 0;
         }
-        else if (month >= 12 && day >= 30) {
+        else if (month >= 12 && t_day >= 30) {
             year++;
-            day = 0;
+            t_day = 0;
             month = 0;
-        }*/
+        }
  
         if (month >= 1) {
-            dayString = "Day: " + std::to_string(day) + "Month: " + std::to_string(month);
+            dayString = "Day: " + std::to_string(t_day) + " Month: " + std::to_string(month);
         }
         else if (year >= 1) {
-            dayString = "Day: " + std::to_string(day) + "Month: " + std::to_string(month) + "Year: " + std::to_string(year);
+            dayString = "Day: " + std::to_string(t_day) + " Month: " + std::to_string(month) + " Year: " + std::to_string(year);
         }
         else {
-            dayString = "Day: " + std::to_string(day);
+            dayString = "Day: " + std::to_string(t_day);
 
         }
         const char* cstr = dayString.c_str();  // Convert string to C-style string
@@ -812,6 +815,7 @@ void timerProc(int id)
     // Check if a second has passed
     if (elapsedTime >= 1000) {
         ++day;
+        t_day++;
         std::cout << "Day count: " << day << std::endl;
         elapsedTime -= 1000; // Reset elapsedTime after incrementing day
     }
