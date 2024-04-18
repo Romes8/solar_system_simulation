@@ -1,3 +1,4 @@
 ﻿  main.cpp
-C:\Transfer\Dokumenty\DANSKO\ITU\Games\2ndSemester\GraphicsProg\Code\solar_system_simulation\Solar System project\Solar System project\main.cpp(834,25): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Transfer\Dokumenty\DANSKO\ITU\Games\2ndSemester\GraphicsProg\Code\solar_system_simulation\Solar System project\Solar System project\main.cpp(830,29): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+C:\Transfer\Dokumenty\DANSKO\ITU\Games\2ndSemester\GraphicsProg\Code\solar_system_simulation\Solar System project\Solar System project\main.cpp(843,25): warning C4305: 'initializing': truncation from 'double' to 'float'
   Solar System project.vcxproj -> C:\Transfer\Dokumenty\DANSKO\ITU\Games\2ndSemester\GraphicsProg\Code\solar_system_simulation\Solar System project\x64\Debug\Solar System project.exe

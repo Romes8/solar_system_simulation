@@ -70,9 +70,9 @@ float earth_spin_per_frame = get_rot_per_frame_day(0.99f); //how many times does
 
 //MOON
 float moonRotationAngle = 0.0f;
-float moon_rotation_per_frame = get_rot_per_frame_year(365.0f);
+float moon_rotation_per_frame = get_rot_per_frame_year(27.3f);
 float moonAxisRotationAngle = 0.0f;
-float moon_spin_per_frame = get_rot_per_frame_day(0.99f); //how many times does the planet turn around y axis during one day - earth = 1
+float moon_spin_per_frame = get_rot_per_frame_day(273.0f); //how many times does the planet turn around y axis during one day - earth = 1
 
 //Mars
 float marsRotationAngle = 0.0f;
@@ -394,12 +394,18 @@ void get_earth() {
 
     glPushMatrix(); // Save Earth's matrix state for the Moon
 
+    // ----------------- MOON -----------------
+
     // Moon's orbital motion around the Earth
-    moonRotationAngle = updateRotation(moon_rotation_per_frame, moonRotationAngle);
-    glRotatef(moonRotationAngle, 0.0f, 1.0f, 0.0f);
+    //moonRotationAngle = updateRotation(moon_rotation_per_frame, moonRotationAngle);
+    //glRotatef(moonRotationAngle, 0.0f, 1.0f, 0.0f);
 
     // Translate Moon to its orbital radius from Earth
     glTranslatef(0.384 * Distance, 0.0f, 0.0f);
+
+    //glRotatef(6.0f, 0.0f, 1.0f, 0.0f); // Daily rotation around the Earth's axis
+    moonAxisRotationAngle = updateAxisRotation(moon_spin_per_frame, moonAxisRotationAngle);
+    glRotatef(moonAxisRotationAngle, 0.0f, 1.0f, 0.0f);
 
     // Set material properties and draw the Moon
     GLfloat moon_mat_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -731,17 +737,17 @@ void DisplayText(int day) {
         
         
 
-        if (t_day >= 30) {
+        if (t_day > 30) {
             ++month;
-            t_day = 0;
+            t_day = 1;
         }
-        else if (month >= 12 && t_day >= 30) {
+        else if (month == 12 && t_day == 30) {
             year++;
-            t_day = 0;
-            month = 0;
+            t_day = 1;
+            month = 1;
         }
  
-        if (month >= 1) {
+        if (month >= 1 && year == 0) {
             dayString = "Day: " + std::to_string(t_day) + " Month: " + std::to_string(month);
         }
         else if (year >= 1) {
@@ -789,6 +795,10 @@ void myDisplay(void)
 
     DisplayText(day);
 
+    //usefull prints:
+    //std::cout << "Camera Position: (" << "x: " << aix_x << ", " << "y: " << aix_y << ", " << "z: " << aix_z << "), Angle: " << Angle << std::endl;
+    std::cout << "speed_controll: " << speed_controll << std::endl;
+
     get_sun();
     get_mercu();
     get_ven();
@@ -813,14 +823,13 @@ void timerProc(int id)
     elapsedTime += 17; // Add 17 milliseconds per frame
 
     // Check if a second has passed
-    if (elapsedTime >= 1000) {
+    if (elapsedTime >= 1000 * speed_controll) {
         ++day;
         t_day++;
         std::cout << "Day count: " << day << std::endl;
-        elapsedTime -= 1000; // Reset elapsedTime after incrementing day
+        elapsedTime -= 1000 * speed_controll; // Reset elapsedTime after incrementing day
     }
 
-    std::cout << "Camera Position: (" << "x: " << aix_x << ", " << "y: " << aix_y << ", " << "z: " << aix_z << "), Angle: " << Angle << std::endl;
 
 
     glutPostRedisplay();
@@ -872,6 +881,14 @@ void mykeyboard(unsigned char key, int x, int y) {
     case 'k':
     case 'K':  // Spacebar for moving up
         aix_y -= movementSpeed;
+        break;
+    case 't':
+    case 'T':  // Spacebar for moving up
+        speed_controll += 0.10f;
+        break;
+    case 'y':
+    case 'Y':  // Spacebar for moving up
+        speed_controll -= 0.10f;
         break;
     }
 
