@@ -1,2 +1,3 @@
 ﻿  main.cpp
+C:\Transfer\Dokumenty\DANSKO\ITU\Games\2ndSemester\GraphicsProg\Code\solar_system_simulation\Solar System project\Solar System project\main.cpp(830,25): warning C4305: 'initializing': truncation from 'double' to 'float'
   Solar System project.vcxproj -> C:\Transfer\Dokumenty\DANSKO\ITU\Games\2ndSemester\GraphicsProg\Code\solar_system_simulation\Solar System project\x64\Debug\Solar System project.exe

@@ -20,8 +20,9 @@ int rewrite_day = 0;
 int month = 0;
 int year = 0;
 std::string dayString;
+GLfloat yaw = 80.0; // Initial yaw set to 0
 GLdouble Angle = 80.0;
-GLdouble aix_x = 0.0, aix_y = 2000000, aix_z = 2000000;
+GLdouble aix_x = 850000.0, aix_y = 20000, aix_z = 2000000;
 GLdouble cameraDistance = 0;
 
 const float FPS = 60.0f;
@@ -753,7 +754,7 @@ void DisplayText(int day) {
         renderBitmapString(20, 20, GLUT_BITMAP_TIMES_ROMAN_24, cstr);  // Position text
 
         // Restore matrices
-        glPopMatrix();
+        glPopMatrix(); 
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
         glMatrixMode(GL_MODELVIEW);
@@ -772,9 +773,11 @@ void myDisplay(void)
     get_bg();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(Angle, (float)width / (float)height, 1, 10000000000);    glMatrixMode(GL_MODELVIEW);
+    gluPerspective(Angle, (float)width / (float)height, 1, 10000000);    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(aix_x, aix_y, aix_z, 0, 0, 0, 0, 0, 1);
+    GLfloat dir_x = cos(yaw);  // Assuming yaw is in radians and camera looks towards the origin
+    GLfloat dir_z = sin(yaw);
+    gluLookAt(aix_x, aix_y, aix_z, aix_x + dir_x, aix_y, aix_z + dir_z, 0, 1, 0); // Updated to use yaw
 
     //overally increasy the light levels
     GLfloat global_ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
@@ -813,7 +816,7 @@ void timerProc(int id)
         elapsedTime -= 1000; // Reset elapsedTime after incrementing day
     }
 
-    //std::cout << "Camera Position: (" << aix_x << ", " << aix_y << ", " << aix_z << "), Angle: " << Angle << std::endl;
+    std::cout << "Camera Position: (" << aix_x << ", " << aix_y << ", " << aix_z << "), Angle: " << Angle << std::endl;
 
 
     glutPostRedisplay();
@@ -822,35 +825,52 @@ void timerProc(int id)
     glutTimerFunc(17, timerProc, 1);
 }
 
-
 void mykeyboard(unsigned char key, int x, int y) {
+    float movementSpeed = 100000.0f; // Adjust the speed as necessary
+    float rotationSpeed = 0.05; // Rotation speed in radians
+
     switch (key) {
     case 'W':
     case 'w':
-        aix_z -= 10000;  // Move forward
+        aix_x += cos(yaw) * movementSpeed;  // Forward in the direction camera is facing
+        aix_z += sin(yaw) * movementSpeed;
         break;
     case 'S':
     case 's':
-        aix_z += 10000;  // Move backward
+        aix_x -= cos(yaw) * movementSpeed;  // Backward
+        aix_z -= sin(yaw) * movementSpeed;
         break;
     case 'A':
     case 'a':
-        aix_x -= 10000;  // Move left
+        aix_x -= sin(yaw) * movementSpeed;  // Strafe left
+        aix_z += cos(yaw) * movementSpeed;
         break;
     case 'D':
     case 'd':
-        aix_x += 10000;  // Move right
+        aix_x += sin(yaw) * movementSpeed;  // Strafe right
+        aix_z -= cos(yaw) * movementSpeed;
         break;
-
     case 'J':
     case 'j':
-        Angle -= 5.0;  // Rotate left
+        yaw -= rotationSpeed;  // Rotate left
         break;
     case 'L':
     case 'l':
-        Angle += 5.0;  // Rotate right
+        yaw += rotationSpeed;  // Rotate right
+        break;
+    case 32:  // Spacebar for moving up
+        aix_y += movementSpeed;
+        break;
+    case 'i':
+    case 'I':  // Spacebar for moving up
+        aix_y += movementSpeed;
+        break;
+    case 'k':
+    case 'K':  // Spacebar for moving up
+        aix_y -= movementSpeed;
         break;
     }
+
     glutPostRedisplay();
 }
 
