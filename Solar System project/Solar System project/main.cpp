@@ -23,7 +23,7 @@ int year = 0;
 std::string dayString;
 GLfloat yaw = 80.0; // Initial yaw set to 0
 GLdouble Angle = 80.0;
-GLdouble aix_x = 850000.0, aix_y = 20000, aix_z = 2000000;
+GLdouble aix_x = 930000.0, aix_y = -80000, aix_z = 2000000;
 GLdouble cameraDistance = 0;
 
 const float FPS = 60.0f;
@@ -820,7 +820,7 @@ void timerProc(int id)
         elapsedTime -= 1000; // Reset elapsedTime after incrementing day
     }
 
-    std::cout << "Camera Position: (" << aix_x << ", " << aix_y << ", " << aix_z << "), Angle: " << Angle << std::endl;
+    std::cout << "Camera Position: (" << "x: " << aix_x << ", " << "y: " << aix_y << ", " << "z: " << aix_z << "), Angle: " << Angle << std::endl;
 
 
     glutPostRedisplay();
