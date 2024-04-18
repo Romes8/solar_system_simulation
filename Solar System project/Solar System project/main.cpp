@@ -11,9 +11,9 @@
 #define Windowheight 1024
 // Here the Distance can be treated as a unit. For example, the distance between  
 // mercurio and sun is 1*Distance, and between earth and sun is 3*Distance
-#define Distance 100000000
+#define Distance 100000
 //The radius of earth (expanded), can also be treated as unit to calcualte other planet's radius
-#define Eradius 16000000
+#define Eradius 16000
 const GLfloat Pi = 3.1415926536f;
 int day = 0;
 int rewrite_day = 0;
@@ -21,7 +21,7 @@ int month = 0;
 int year = 0;
 std::string dayString;
 GLdouble Angle = 80.0;
-GLdouble aix_x = 0.0, aix_y = 2000000000, aix_z = 2000000000;
+GLdouble aix_x = 0.0, aix_y = 2000000, aix_z = 2000000;
 GLdouble cameraDistance = 0;
 
 const float FPS = 60.0f;
@@ -342,7 +342,7 @@ void get_sun()
     glBindTexture(GL_TEXTURE_2D, tsun);
     gluQuadricTexture(sphere, GL_TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
-    gluSphere(sphere,69600000, 100, 100);
+    gluSphere(sphere,69600, 100, 100);
     glDisable(GL_TEXTURE_2D);
     glPopMatrix();
     counter_frames++;
@@ -387,7 +387,7 @@ void get_earth() {
     gluQuadricTexture(sphere, GL_TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
     glBindTexture(GL_TEXTURE_2D, tearth);
-    gluSphere(sphere, 15945000, 100, 100);
+    gluSphere(sphere, 15945, 100, 100);
     glDisable(GL_TEXTURE_2D);
 
     glPushMatrix(); // Save Earth's matrix state for the Moon
@@ -417,7 +417,7 @@ void get_earth() {
     gluQuadricTexture(sphere, GL_TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
     glBindTexture(GL_TEXTURE_2D, tmoon);
-    gluSphere(sphere, 4345000, 50, 50);  // Adjust the size according to your scale
+    gluSphere(sphere, 4345, 50, 50);  // Adjust the size according to your scale
     glDisable(GL_TEXTURE_2D);
 
     glPopMatrix(); // Restore Earth's matrix state
@@ -827,19 +827,19 @@ void mykeyboard(unsigned char key, int x, int y) {
     switch (key) {
     case 'W':
     case 'w':
-        aix_z -= 10000000;  // Move forward
+        aix_z -= 10000;  // Move forward
         break;
     case 'S':
     case 's':
-        aix_z += 10000000;  // Move backward
+        aix_z += 10000;  // Move backward
         break;
     case 'A':
     case 'a':
-        aix_x -= 10000000;  // Move left
+        aix_x -= 10000;  // Move left
         break;
     case 'D':
     case 'd':
-        aix_x += 10000000;  // Move right
+        aix_x += 10000;  // Move right
         break;
 
     case 'J':
