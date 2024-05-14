@@ -260,7 +260,7 @@ GLuint LoadTexture(const char* filename)
 void init_LoadallTexture()
 {
     tsun = LoadTexture("pictures/sol.bmp");
-    tbg = LoadTexture("pictures/bg.bmp");
+    tbg = LoadTexture("pictures/bg_planets.bmp");
     tearth = LoadTexture("pictures/terra.bmp");
     tmoon = LoadTexture("pictures/lua.bmp");
     tmercu = LoadTexture("pictures/mercurio.bmp");
